@@ -24,3 +24,12 @@ psycopg2-binary (2.9.9)
 
 `poetry add asyncpg`
 asyncpg (0.29.0)
+
+`poetry add pydantic-settings`
+pydantic-settings (2.2.0)
+python-dotenv (1.0.1)
+
+## commands
+
+`env $(cat .env) alembic revision --autogenerate -m "new_migration_name"`
+`env $(cat .env) alembic upgrade head `

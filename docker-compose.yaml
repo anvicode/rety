@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  postgres_films:
+    restart: always
+    image: postgres
+    container_name: films_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: films
+    ports:
+      - '6432:5432'
+    volumes:
+      - postgres-data-films:/var/lib/postgresql/data
+
+volumes:
+  postgres-data-films:

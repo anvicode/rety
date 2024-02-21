@@ -1,10 +1,28 @@
 from datetime import timezone
 
-from sqlalchemy import UUID, Column, DateTime, Float, ForeignKey, String, Text, func
+from sqlalchemy import (
+    UUID,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    String,
+    Table,
+    Text,
+    func,
+)
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.schema import PrimaryKeyConstraint
 
 Base = declarative_base()
+
+
+association_table = Table(
+    "association",
+    Base.metadata,
+    Column("genre_id", ForeignKey("genre.id")),
+    Column("film_work_id", ForeignKey("film_work.id")),
+)
 
 
 class FilmWork(Base):
@@ -20,8 +38,18 @@ class FilmWork(Base):
     created_at = Column(DateTime, server_default=func.now(tz=timezone.utc))
     updated_at = Column(DateTime, onupdate=func.now(tz=timezone.utc))
 
-    GenreFilmWork = relationship("GenreFilmWork", back_populates="FilmWork")
-    PersonFilmWork = relationship("PersonFilmWork", back_populates="FilmWork")
+    genrefilmwork = relationship(
+        "GenreFilmWork",
+        back_populates="FilmWork",
+        secondary=association_table,
+        cascade="all, delete-orphan",
+    )
+    personfilmwork = relationship(
+        "PersonFilmWork",
+        back_populates="FilmWork",
+        secondary=association_table,
+        cascade="all, delete-orphan",
+    )
 
 
 class Genre(Base):
@@ -33,7 +61,7 @@ class Genre(Base):
     created_at = Column(DateTime, server_default=func.now(tz=timezone.utc))
     updated_at = Column(DateTime, onupdate=func.now(tz=timezone.utc))
 
-    GenreFilmWork = relationship("GenreFilmWork", back_populates="Genre")
+    # genrefilmwork = relationship("GenreFilmWork", back_populates="Genre")
 
 
 class Person(Base):
@@ -44,7 +72,7 @@ class Person(Base):
     created_at = Column(DateTime, server_default=func.now(tz=timezone.utc))
     updated_at = Column(DateTime, onupdate=func.now(tz=timezone.utc))
 
-    PersonFilmWork = relationship("PersonFilmWork", back_populates="Person")
+    # personfilmwork = relationship("PersonFilmWork", back_populates="Person")
 
 
 class GenreFilmWork(Base):
@@ -55,12 +83,12 @@ class GenreFilmWork(Base):
     genre_id = Column(ForeignKey(Genre.id), nullable=False)
     created_at = Column(DateTime, server_default=func.now(tz=timezone.utc))
 
-    FilmWork = relationship(
-        "FilmWork", back_populates="GenreFilmWork", cascade="all, delete-orphan"
-    )
-    Genre = relationship(
-        "Genre", back_populates="GenreFilmWork", cascade="all, delete-orphan"
-    )
+    # filmwork = relationship(
+    #     "FilmWork", back_populates="GenreFilmWork", cascade="all, delete-orphan"
+    # )
+    # genre = relationship(
+    #     "Genre", back_populates="GenreFilmWork", cascade="all, delete-orphan"
+    # )
 
 
 class PersonFilmWork(Base):
@@ -72,9 +100,9 @@ class PersonFilmWork(Base):
     role = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now(tz=timezone.utc))
 
-    FilmWork = relationship(
-        "FilmWork", back_populates="PersonFilmWork", cascade="all, delete-orphan"
-    )
-    Person = relationship(
-        "Person", back_populates="PersonFilmWork", cascade="all, delete-orphan"
-    )
+    # filmwork = relationship(
+    #     "FilmWork", back_populates="PersonFilmWork", cascade="all, delete-orphan"
+    # )
+    # person = relationship(
+    #     "Person", back_populates="PersonFilmWork", cascade="all, delete-orphan"
+    # )
